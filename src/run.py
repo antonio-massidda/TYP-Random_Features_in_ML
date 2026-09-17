@@ -22,7 +22,7 @@ from config_loader import load_config, get_sampling_configs_from_yaml, get_mlp_c
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "config.yaml"
 
-
+# MY NOTE: get dataset name and details from the YAML file
 def get_datasets_from_config(config: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Extract dataset entries from the config."""
     if 'datasets' in config:
@@ -31,7 +31,7 @@ def get_datasets_from_config(config: Dict[str, Any]) -> List[Dict[str, Any]]:
         return [config['dataset']]
     raise ValueError("Config must have 'dataset' or 'datasets' key")
 
-
+# MY NOTE: run 80 rounds of sampling 2000 GNNs for each dataset
 def run_all_experiments(
     config_path: Optional[str] = None,
     verbose: bool = True

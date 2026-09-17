@@ -1,7 +1,7 @@
 from typing import Dict, Any, List
 from itertools import product
 
-
+# MY NOTE: Simplified loading of YAML file
 def load_config(config_path: str = "config.yaml") -> Dict[str, Any]:
     """Load configuration from YAML file."""
     import yaml
@@ -10,6 +10,8 @@ def load_config(config_path: str = "config.yaml") -> Dict[str, Any]:
         return yaml.safe_load(f)
 
 
+# My NOTE: Sampling n times where n equals (hidden channels x layer types x poolings x weight_init_stds)
+# = 80 rounds in total
 def get_sampling_configs_from_yaml(config: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Return the sampling grid from a loaded config."""
     sampling_cfg = config['sampling']
@@ -34,6 +36,7 @@ def get_sampling_configs_from_yaml(config: Dict[str, Any]) -> List[Dict[str, Any
     return configs
 
 
+# MY NOTE: epochs are used during MLP to limit how many times we can go through a dataset
 def get_mlp_config_from_yaml(config: Dict[str, Any]) -> Dict[str, Any]:
     """Extract MLP configuration from loaded config."""
     mlp_cfg = config['mlp']
