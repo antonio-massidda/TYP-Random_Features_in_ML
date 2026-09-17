@@ -1,0 +1,82 @@
+# Repeated-Sampling Experiment Configuration
+#
+# This approach differs from the standard sampling approach:
+# - Standard: Sample 1 MPNN -> Train N MLPs (multiple runs) for averaging
+# - Repeated-sampling: For each run, sample a NEW MPNN -> Train 1 MLP
+#
+# This gives diversity in the random GNN features rather than MLP initialization.
+# All ALI scores are stored for analysis.
+
+# Dataset settings - can specify multiple datasets
+datasets:
+  - name: Mutagenicity
+    n_splits: 5
+    cv_seed: 0
+  - name: NCI1
+    n_splits: 5
+    cv_seed: 0
+  - name: ENZYMES
+    n_splits: 5
+    cv_seed: 0
+  - name: PROTEINS
+    n_splits: 5
+    cv_seed: 0
+  - name: DD
+    n_splits: 5
+    cv_seed: 0
+  - name: IMDB-BINARY
+    n_splits: 5
+    cv_seed: 0
+  - name: IMDB-MULTI
+    n_splits: 5
+    cv_seed: 0
+
+dataset_root: /tmp
+
+device: cuda:0  # Change for your machine if needed.
+
+# Sampling GNN configurations to test
+# All combinations of these hyperparameters will be evaluated (cross product)
+sampling:
+  # GNN hyperparameter grid (cross product)
+  hidden_channels:
+    - [256, 256]
+    - [512, 512]
+    - [256, 256, 256]
+    - [512, 512, 512]
+  layer_types: [GIN, GCN]
+  poolings: [sum, mean]
+  weight_init_stds: [0.1]
+  
+  # Fixed settings
+  activation: ReLU
+  use_bias: true
+  use_last_activation: true
+  weight_sampling: normal
+  
+  # Sampling parameters - for each MLP run, sample this many and pick best by ALI
+  total_samples: 2000
+  chunk_size: 8
+  ali_k: 10
+  ali_block_size: 1000
+
+# Training
+training:
+  # Number of different MPNN samples per fold
+  # (replaces n_runs - now each run has a fresh MPNN)
+  n_mpnn_samples: 3
+  
+  # MLP hyperparameter grid
+  mlp_hidden_layers:
+    - [64, 64]
+  mlp_lrs: [0.0005, 0.001, 0.002]
+  mlp_weight_decays: [0]
+  mlp_dropout_rates: [0.0]
+  mlp_use_scheduler: [true]
+  
+  # MLP training
+  mlp_num_epochs: 300
+  mlp_warmup_ratio: 0.1
+  mlp_last_n_epochs: 20
+
+output_dir: results_multi

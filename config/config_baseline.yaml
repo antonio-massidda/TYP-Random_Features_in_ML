@@ -1,0 +1,61 @@
+# Baseline End-to-End GNN Experiment Configuration
+# =================================================
+
+# Device settings
+device: cuda:0  # Change for your machine if needed.
+
+# Dataset settings (same as sampling for fair comparison)
+# Can specify multiple datasets - experiments will run for each one
+datasets:
+  - name: Mutagenicity
+    n_splits: 5
+    cv_seed: 0
+  - name: NCI1
+    n_splits: 5
+    cv_seed: 0
+  - name: ENZYMES
+    n_splits: 5
+    cv_seed: 0
+  - name: PROTEINS
+    n_splits: 5
+    cv_seed: 0
+  - name: DD
+    n_splits: 5
+    cv_seed: 0
+  - name: IMDB-BINARY
+    n_splits: 5
+    cv_seed: 0
+  - name: IMDB-MULTI
+    n_splits: 5
+    cv_seed: 0
+
+# GNN architectures to test (same as sampling for fair comparison)
+gnn:
+  hidden_channels:
+    - [256, 256]
+    - [512, 512]
+    - [256, 256, 256]
+    - [512, 512, 512]
+  layer_types: [GIN, GCN]
+  poolings: [sum, mean]
+
+# End-to-end training settings
+training:
+  # MLP head architecture
+  mlp_hidden_layers:
+    - [64, 64]
+  
+  # Hyperparameter grid
+  learning_rates: [0.0005, 0.001, 0.002]
+  weight_decays: [0]
+  dropout_rates: [0.0]
+  
+  # Training settings
+  num_epochs: 300
+  warmup_ratio: 0.1
+  last_n_epochs: 20
+  n_runs: 3
+
+# Output settings
+output:
+  dir: results
