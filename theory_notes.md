@@ -128,3 +128,78 @@ Each fold is used once as the test set; the remaining data provides training and
 
 **In the paper:**  
 Hyperparameters are selected using validation accuracy, then final performance is measured on the test set.
+
+---
+
+## 10. ReLU Activation Function
+
+**Definition:**  
+ReLU (Rectified Linear Unit) is an activation function defined as:
+
+$$
+\mathrm{ReLU}(x) = \max(0,x)
+$$
+
+**Key idea:**  
+Negative values become $0$, while positive values remain unchanged.
+
+**Purpose:**  
+Introduces **non-linearity**, allowing neural networks to learn complex patterns.
+
+---
+
+## 11. Dropout Rate
+
+**Definition:**  
+The dropout rate is the **probability of randomly setting a neuron’s output to zero during training**.
+
+**Key idea:**  
+For example, a dropout rate of $0.2$ means that approximately 20% of activations are randomly dropped during each training step.
+
+**Purpose:**  
+Acts as **regularization**, reducing overfitting by preventing the network from relying too heavily on particular neurons.
+
+**Note:**  
+Dropout is normally disabled during evaluation/testing.
+
+---
+
+## 12. Batch Normalization (Batch Norm)
+
+**Definition:**  
+A technique that normalizes layer activations within each mini-batch to stabilize and accelerate neural network training. It also uses learnable parameters to scale and shift the normalized activations.
+
+**Key idea:**  
+It helps keep the values passed between layers at a more stable scale during training.
+
+**Purpose:**  
+Can make training **more stable and faster** and can sometimes improve generalization.
+
+**Typical position:**
+
+$$
+\text{Layer} \rightarrow \text{Batch Norm} \rightarrow \text{ReLU}
+$$
+
+---
+
+## 13. Cross-Entropy Loss
+
+**Definition:**
+Measures the difference between the predicted and true class distributions:
+$$
+L = -\log(p_y)
+$$
+where $p_y$ is the predicted probability of the true class. For a batch:
+$$
+L = -\frac{1}{N}\sum_{n=1}^{N}\log(p_{n,y_n})
+$$
+
+**Key idea:**
+Higher probability assigned to the correct class → lower loss; lower probability → higher loss.
+
+**Purpose:**
+Guides the model to assign higher probabilities to the correct classes during training.
+
+**Note:**
+In PyTorch, `F.cross_entropy()` takes raw logits and internally applies the required softmax/log operations.
