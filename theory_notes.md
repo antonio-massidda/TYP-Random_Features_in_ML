@@ -203,3 +203,22 @@ Guides the model to assign higher probabilities to the correct classes during tr
 
 **Note:**
 In PyTorch, `F.cross_entropy()` takes raw logits and internally applies the required softmax/log operations.
+
+---
+
+## 14. Initialization — key distinction
+
+| Initialization | How it works | Main idea |
+|---|---|---|
+| **Normal** | Samples weights from a Gaussian distribution | Simple random initialization |
+| **Uniform** | Samples weights from a uniform distribution | Simple random initialization with bounded range |
+| **Xavier Normal** | Normal distribution with variance based on input/output dimensions | Keeps activation/gradient scale stable |
+| **Xavier Uniform** | Uniform version of Xavier | Same goal, different distribution |
+| **Orthogonal** | Initializes weights as an orthogonal matrix | Helps preserve vector norms through transformations |
+
+**Quick distinction:**
+- **Normal / Uniform** → choose a distribution and sample weights.
+- **Xavier** → adapts the initialization to the layer's dimensions.
+- **Orthogonal** → structures the weights to preserve information/norms.
+
+---

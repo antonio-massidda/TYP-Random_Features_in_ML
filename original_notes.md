@@ -13,7 +13,11 @@ Freeze it. Train a small classifier on its output. No backprop on the GNN.
  4. `mlp.py` -> applies MLP using steps `GNN layer` -> `BatchNorm` -> `ReLU` -> `Next Layer`
  5. `utils.py` -> handles learning rates by increasing them at a warm-up stage and gradually decreasing them later using the cosine function
  6. `train_mlp` -> trains the model using MLP and releases stats about it
- 12. ...
+ 7. `mpnn.py` -> describe classes of Message Passing Neural Networks
+ 8. `sampling.py` -> find best of 2000 mpnn
+ 9. `sampling_multi.py` -> sampling.py but repeated 10 times 
+ 10. `baseline.py` -> usual GNN end-to-end approach
+ 13. ...
 
 ## Questions I have
  - ...

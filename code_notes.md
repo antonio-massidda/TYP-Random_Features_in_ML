@@ -1143,11 +1143,11 @@ Useful for efficient operations involving large sparse graph adjacency matrices.
 ## `nn.init.normal_()`
 
 **What it does:**
-Initializes tensor values using a normal (Gaussian) distribution.
+Initializes tensor values by sampling weights from a **Gaussian (normal) distribution**.
 
 **Important arguments:**
-- `tensor` → tensor whose values will be initialized.
-- `mean` → mean of the normal distribution.
+- `tensor` → tensor to initialize.
+- `mean` → mean of the distribution.
 - `std` → standard deviation of the distribution.
 
 **Example:**
@@ -1156,19 +1156,19 @@ nn.init.normal_(t, mean=0.0, std=0.02)
 ```
 
 **Remember:**
-The `_` means the tensor is modified **in place**.
+**Normal = simple random initialization** using a Gaussian distribution.
 
 ---
 
 ## `nn.init.uniform_()`
 
 **What it does:**
-Initializes tensor values using a uniform distribution between two boundaries.
+Initializes tensor values by sampling weights from a **uniform distribution** within a specified range.
 
 **Important arguments:**
-- `tensor` → tensor whose values will be initialized.
-- `a` → lower boundary.
-- `b` → upper boundary.
+- `tensor` → tensor to initialize.
+- `a` → lower bound.
+- `b` → upper bound.
 
 **Example:**
 ```python
@@ -1176,14 +1176,14 @@ nn.init.uniform_(t, a=-0.1, b=0.1)
 ```
 
 **Remember:**
-Values are sampled uniformly between `a` and `b`.
+**Uniform = simple random initialization with a bounded range.**
 
 ---
 
 ## `nn.init.xavier_normal_()`
 
 **What it does:**
-Initializes weights using the Xavier/Glorot method with a normal distribution.
+Initializes weights using a **normal distribution whose variance is determined by the input and output dimensions** of the layer.
 
 **Important arguments:**
 - `tensor` → tensor to initialize.
@@ -1195,14 +1195,14 @@ nn.init.xavier_normal_(layer.weight)
 ```
 
 **Remember:**
-Designed to keep activation/gradient scales relatively stable across layers.
+**Xavier Normal = normal distribution + layer dimensions → helps keep activation/gradient scales stable.**
 
 ---
 
 ## `nn.init.xavier_uniform_()`
 
 **What it does:**
-Initializes weights using the Xavier/Glorot method with a uniform distribution.
+Initializes weights using the **Xavier method with a uniform distribution**, with the range determined by the layer's input/output dimensions.
 
 **Important arguments:**
 - `tensor` → tensor to initialize.
@@ -1214,14 +1214,14 @@ nn.init.xavier_uniform_(layer.weight)
 ```
 
 **Remember:**
-Same Xavier principle as `xavier_normal_()`, but samples from a uniform distribution.
+**Xavier Uniform = same goal as Xavier Normal, but uses a uniform distribution instead.**
 
 ---
 
 ## `nn.init.orthogonal_()`
 
 **What it does:**
-Initializes a tensor using an orthogonal matrix initialization.
+Initializes weights using an **orthogonal matrix**, where the weight vectors are mutually orthogonal.
 
 **Important arguments:**
 - `tensor` → tensor to initialize.
@@ -1233,7 +1233,7 @@ nn.init.orthogonal_(layer.weight)
 ```
 
 **Remember:**
-Often used for weight matrices to help preserve the scale of information during transformations.
+**Orthogonal = aims to preserve vector norms through transformations**, helping information remain stable as it passes through layers.
 
 ---
 
@@ -1289,5 +1289,72 @@ init_fn = get_init_fn(config)
 
 **Remember:**
 Unlike the functions above, `get_init_fn()` is **project-specific**, so its exact behaviour depends on its implementation in the repository.
+
+---
+
+## `torch.empty()`
+
+**What it does:**
+Creates a tensor with a specified shape **without initializing its values**.
+
+**Important arguments:**
+- `size` → shape/dimensions of the tensor.
+- `dtype` → data type of the tensor.
+- `device` → device where the tensor is created (`cpu`, `cuda`, etc.).
+
+**Example:**
+```python
+x = torch.empty(3, 4)
+```
+
+**Remember:**
+The values are **uninitialized** and may contain arbitrary memory values. Use it when you plan to fill the tensor afterwards.
+
+---
+
+## `torch.einsum()`
+
+**What it does:**
+Performs tensor operations such as multiplication, dot products, and summation using **Einstein summation notation**.
+
+**Important arguments:**
+- `equation` → string describing how input dimensions are combined.
+- `operands` → tensors involved in the operation.
+
+**Example:**
+```python
+result = torch.einsum("ij,jk->ik", A, B)
+```
+
+This performs matrix multiplication: `A @ B`.
+
+**Remember:**
+The letters represent tensor dimensions:
+- Same letter → dimensions are multiplied/summed according to the equation.
+- `->` → specifies the dimensions of the output.
+- `...` → represents any number of batch dimensions.
+
+---
+
+## `field(default_factory=...)`
+
+**What it does:**
+Defines a default value for a field in a Python `dataclass`, with `default_factory` creating a **new value for each instance**.
+
+**Important arguments:**
+- `default_factory` → function called to create the default value.
+- `init` → whether the field is included in the generated `__init__()` method.
+- `repr` → whether the field appears in the object's representation.
+
+**Example:**
+```python
+field(default_factory=lambda: [[64], [64, 64]])`
+```
+Here:
+- `lambda: [[64], [64, 64]]` → function that creates the default list.
+- Each dataclass instance gets its **own separate list**.
+
+**Remember:**
+`default_factory` is especially useful for **mutable defaults** such as lists and dictionaries, avoiding the same object being shared between instances.
 
 ---
