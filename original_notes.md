@@ -6,7 +6,7 @@
 Sample 2000 random GNNs. Score each with ALI. Keep the best one.
 Freeze it. Train a small classifier on its output. No backprop on the GNN.
 
-## File map:
+## File map
  1. `splits.py` -> splits a dataset using the 5-fold cross validation
  2. `dataset.py` -> gets dataset information (e.g. name and root) and applies the split
  3. `metrics.py` -> computes ALI
@@ -17,7 +17,25 @@ Freeze it. Train a small classifier on its output. No backprop on the GNN.
  8. `sampling.py` -> find best of 2000 mpnn
  9. `sampling_multi.py` -> sampling.py but repeated 10 times 
  10. `baseline.py` -> usual GNN end-to-end approach
- 13. ...
+ 11. `config_loader.py` -> loads the YAML file to use
+ 12. `run.py` -> runs the experiment completely
+ 13. `run_multi.py` -> runs the experiment 10 times
+ 14. `run_baseline.py` -> runs the usual GNN end-to-end approach
+
+## Dependencies
+   ```
+   run.py
+   ├── config_loader.py
+   └── sampling.py
+       ├── mpnn.py
+       ├── metrics.py
+       ├── dataset.py
+       |   └── splits.py
+       └── train_mlp.py
+           ├── mlp.py
+           └── utils.py
+   ```
+       
 
 ## Questions I have
  - ...
@@ -29,9 +47,13 @@ Freeze it. Train a small classifier on its output. No backprop on the GNN.
 
 ## Decisions for my project
  - I will keep: mpnn.py, metrics.py, dataset.py, splits.py untouched
- - I will delete: mlp.py
- - I will create: train_classical.py, run_classical.py
- - I will modify: sampling.py (add classical branch), config_loader.py
+ - I will delete: train_mlp.py, mlp.py, utils.py
+ - I will create: train_classical, classical.py
+ - I will modify: sampling.py, config_loader.py
 
 ## Experiments I want to run
- 1. ...
+ 1. Random forest
+ 3. Logistic regression
+ 4. Gradient boosting classifier
+ 5. Support Vector Machine
+ 6. K-neighbours classifier
