@@ -49,7 +49,7 @@ Freeze it. Train a small classifier on its output. No backprop on the GNN.
  - I will keep: mpnn.py, metrics.py, dataset.py, splits.py untouched
  - I will delete: train_mlp.py, mlp.py, utils.py
  - I will create: train_classical, classical.py
- - I will modify: sampling.py, config_loader.py
+ - I will modify: sampling.py, config_loader.py, run.py
 
 ## Experiments I want to run
  1. Random forest
