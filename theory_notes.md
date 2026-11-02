@@ -1,5 +1,19 @@
 # GNNs Don't Need Backprop — Theory Notes
 
+## Neural Collapse
+
+**Definition:**
+A phenomenon in neural networks where learned representations of training samples become increasingly clustered by class near the end of training.
+
+**Key idea:**
+Samples from the same class converge towards their class mean, while different class means become well separated.
+
+**Purpose:**
+Helps understand the geometry of learned representations and neural network classification.
+
+**Note:**
+Neural collapse is an observed phenomenon, not a guaranteed outcome for every neural network.
+
 ## 1. Graph Isomorphism Network (GIN)
 
 **Definition:**  

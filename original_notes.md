@@ -1,10 +1,18 @@
 # Notes about original file
 
----
-
 ## What the paper does (in my words)
-Sample 2000 random GNNs. Score each with ALI. Keep the best one.
-Freeze it. Train a small classifier on its output. No backprop on the GNN.
+1. Load 7 benchmark TU Datasets
+1. Apply a 5-fold cross-validation ($80\%, 10\%, 10\%$) split protocol
+1. Sample 2,000 randomly initialised GNN frozen encoders
+1. Calculate an alignment score ($ALI_k$) for all encoders.  
+   - Based on a KNN, where similarity with $k$-nearest is subtracted to similarity with all the others.  
+   - The comparison is only within the training set.
+1. Select the frozen encoder with the highest $ALI_k$
+   - Train an MLP on top of it (16 different configurations can be used regarding hidden layers, GIN-GCN, and mean-sum poolin)
+1. Repeat this experiments for all folds and for all seed (5 x 3 = 15 runs in total)
+1. Compare results to its end-to-end MLP baseline between models and for each dataset
+1. Vargha-Delaney $A_{12}$ measurement = 0.48 :arrow_right: NO SIGNIFICANT DIFFERENCE
+
 
 ## File map
  1. `splits.py` -> splits a dataset using the 5-fold cross validation
@@ -35,25 +43,3 @@ Freeze it. Train a small classifier on its output. No backprop on the GNN.
            ├── mlp.py
            └── utils.py
    ```
-       
-
-## Questions I have
- - ...
-
-## Things I understand now
- - **[X] How long does it take to run the program with run.py?**
-    With Teaching HPC and smaller datasets, I can make it work in around half a hour
- - ...
-
-## Decisions for my project
- - I will keep: mpnn.py, metrics.py, dataset.py, splits.py untouched
- - I will delete: train_mlp.py, mlp.py, utils.py
- - I will create: train_classical, classical.py
- - I will modify: sampling.py, config_loader.py, run.py
-
-## Experiments I want to run
- 1. Random forest
- 3. Logistic regression
- 4. Gradient boosting classifier
- 5. Support Vector Machine
- 6. K-neighbours classifier
