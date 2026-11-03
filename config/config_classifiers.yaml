@@ -1,0 +1,63 @@
+# Sampling GNN Experiment Configuration
+# ======================================
+
+# Device settings
+device: cuda:0  # Change for your machine if needed.
+
+# Dataset settings
+# Can specify multiple datasets - experiments will run for each one
+datasets:
+  - name: Mutagenicity
+    n_splits: 5
+    cv_seed: 0
+  # - name: NCI1
+  #   n_splits: 5
+  #   cv_seed: 0
+  # - name: ENZYMES
+  #   n_splits: 5
+  #   cv_seed: 0
+  # - name: PROTEINS
+  #   n_splits: 5
+  #   cv_seed: 0
+  # - name: DD
+  #   n_splits: 5
+  #   cv_seed: 0
+  # - name: IMDB-BINARY
+  #   n_splits: 5
+  #   cv_seed: 0
+  # - name: IMDB-MULTI
+  #   n_splits: 5
+  #   cv_seed: 0
+
+# Sampling GNN configurations to test
+# All combinations of these hyperparameters will be evaluated (cross product)
+sampling:
+  # Sampling settings
+  total_samples: 2000
+  chunk_size: 32
+  
+  # GNN hyperparameter grid (cross product)
+  hidden_channels:
+    - [256, 256]
+    - [512, 512]
+    - [256, 256, 256]
+    - [512, 512, 512]
+  layer_types: [GIN, GCN]
+  poolings: [sum, mean]
+  weight_init_stds: [0.1]
+
+# Random Forest training settings
+rf:
+  # Hyperparameter grid
+  n_estimators: [100]
+  max_depth: [None]
+  min_samples_leaf: [1]
+
+  # Training settings (not in grid)
+  warmup_ratio: 0.1
+  n_runs: 3
+
+
+# Output settings
+output:
+  dir: results
