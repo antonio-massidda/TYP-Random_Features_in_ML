@@ -14,15 +14,9 @@ from typing import List
 @dataclass
 class TrainResult:
     """Results from a single training run."""
+    classifier: str
     val_acc: float
     test_acc: float
-    best_epoch: int
-    
-    val_acc_last: float
-    test_acc_last: float
-    best_epoch_last: int
-    
-    model_state: Optional[Dict[str, Any]] = None
 
 
 @dataclass
