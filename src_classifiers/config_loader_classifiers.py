@@ -40,10 +40,9 @@ def get_rf_config_from_yaml(config: Dict[str, Any]) -> Dict[str, Any]:
     rf_cfg = config['rf']
     
     return {
-        'n_estimators': int(rf_cfg['n_estimators']),
-        'max_depth': int(rf_cfg['max_depth']),
-        'min_samples_leaf': int(rf_cfg['min_samples_leaf']),
+        'n_estimators': [int(x) for x in rf_cfg['n_estimators']],
+        'max_depth': [bool(x) for x in rf_cfg['max_depth']],
+        'min_samples_leaf': [int(x) for x in rf_cfg['min_samples_leaf']],
 
-        'warmup_ratio': float(rf_cfg['warmup_ratio']),
         'n_runs': int(rf_cfg['n_runs']),
     }

@@ -12,13 +12,13 @@ from pathlib import Path
 from itertools import product
 from typing import List, Dict, Any, Optional
 
-from sampling import (
+from sampling_classifiers import (
     SamplingConfig,
     ExperimentConfig,
     run_experiment,
     save_results
 )
-from config_loader import load_config, get_sampling_configs_from_yaml, get_rf_config_from_yaml
+from config_loader_classifiers import load_config, get_sampling_configs_from_yaml, get_rf_config_from_yaml
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "config_classifiers.yaml"
 
@@ -157,7 +157,6 @@ def run_dataset_experiments(
             rf_n_estimators=rf_config['n_estimators'], 
             rf_max_depth=rf_config['max_depth'],
             rf_min_samples_leaf=rf_config['min_samples_leaf'],
-            rf_warmup_ratio=rf_config['warmup_ratio'],
             rf_n_runs=rf_config['n_runs'],
             output_dir=str(layer_folder),
             experiment_name=arch_str

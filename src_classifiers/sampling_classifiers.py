@@ -20,7 +20,7 @@ from torch_geometric.nn import global_add_pool, global_mean_pool, global_max_poo
 from dataset import GraphDataset, DataSplit, PreparedData
 from mpnn import BatchedMPNN, MPNNConfig
 from metrics import compute_ali
-from train_mlp import TrainConfig, train_mlp_averaged, AveragedTrainResult
+from train_classifiers import train_classifiers_averaged, AveragedTrainResult
 
 
 @dataclass
@@ -60,7 +60,6 @@ class ExperimentConfig:
     rf_max_depth: List[int | None] = field(default_factory=lambda: [[None]])
     rf_min_samples_leaf: List[int] = field(default_factory=lambda: [[1]])
     
-    rf_warmup_ratio: float = 0.1
     rf_n_runs: int = 10
     
     output_dir: str = 'results'
@@ -344,7 +343,7 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
             print(f"  Feature shape: {features.shape}", flush=True)
         
         if verbose:
-            print(f"\n--- Training {len(rf_param_grid)} RF configs (x{config.mlp_n_runs} runs each) ---", flush=True)
+            print(f"\n--- Training {len(rf_param_grid)} RF configs (x{config.rf_n_runs} runs each) ---", flush=True)
         
         rf_pbar = tqdm(
             enumerate(rf_param_grid),
@@ -357,13 +356,11 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
             leave=False
         )
         
-        for cfg_idx, (hidden, lr, wd, dropout, use_sched, num_epochs) in mlp_pbar:
+        for cfg_idx, (n_estimators, max_depth, min_samples_leaf) in rf_pbar:
             train_config = TrainConfig(
                 n_estimators=n_estimators,
                 max_depth=max_depth,
                 min_samples_leaf=min_samples_leaf,
-
-                warmup_ratio=config.mlp_warmup_ratio,
             )
             
             rf_result = train_rf_averaged(

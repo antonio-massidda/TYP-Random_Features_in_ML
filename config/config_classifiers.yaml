@@ -39,22 +39,23 @@ sampling:
   # GNN hyperparameter grid (cross product)
   hidden_channels:
     - [256, 256]
-    - [512, 512]
-    - [256, 256, 256]
-    - [512, 512, 512]
-  layer_types: [GIN, GCN]
-  poolings: [sum, mean]
+    # - [512, 512]
+    # - [256, 256, 256]
+    # - [512, 512, 512]
+  # layer_types: [GIN, GCN]
+  layer_types: [GIN]
+  # poolings: [sum, mean]
+  poolings: [sum]
   weight_init_stds: [0.1]
 
 # Random Forest training settings
 rf:
   # Hyperparameter grid
-  n_estimators: [100]
-  max_depth: [None]
+  n_estimators: [300]
+  max_depth: [null]
   min_samples_leaf: [1]
 
   # Training settings (not in grid)
-  warmup_ratio: 0.1
   n_runs: 3
 
 
