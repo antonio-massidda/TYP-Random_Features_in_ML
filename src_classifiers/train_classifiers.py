@@ -51,9 +51,6 @@ def train_classifiers(
     features = features.to(device)
     labels = labels.to(device)
 
-    num_classes = labels.max().item() + 1
-
-    best_val_acc = 0.0
 
     train_features, train_labels    = features[train_idx],  labels[train_idx]
     val_features,   val_labels      = features[val_idx],    labels[val_idx]

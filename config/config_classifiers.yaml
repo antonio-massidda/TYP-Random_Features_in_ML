@@ -62,6 +62,22 @@ rf:
   # Training settings (not in grid)
   n_runs: 3
 
+# SVM training settings
+svm:
+  # Hyperparameter grid
+  C: [1.0]              # Regularization parameter
+  kernel: ['rbf']       # Kernel type used in the algorithm
+
+  # Training settings (not in grid)
+  n_runs: 1
+
+# Logistic Regression training settings
+logr:
+  # Hyperparameter grid
+  C: [1.0]              # Inverse of regularization strength
+
+  # Training settings (not in grid)
+  n_runs: 1
 
 # Output settings
 output:
