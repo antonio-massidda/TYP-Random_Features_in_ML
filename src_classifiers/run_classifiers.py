@@ -170,8 +170,6 @@ def run_dataset_experiments(
         print(f"\n>>> Results saved to: {filepath}")
         print(f">>> Best val acc:       {results['best_config']['val_acc_mean']:.4f} ± {results['best_config']['val_acc_std']:.4f}")
         print(f">>> Selected test acc:  {results['best_config']['test_acc_mean']:.4f} ± {results['best_config']['test_acc_std']:.4f}")
-        print(f">>> Best val_last acc:  {results['best_config_last']['val_acc_last_mean']:.4f} ± {results['best_config_last']['val_acc_last_std']:.4f}")
-        print(f">>> Selected test_last: {results['best_config_last']['test_acc_last_mean']:.4f} ± {results['best_config_last']['test_acc_last_std']:.4f}")
     
     print(f"\n{'='*70}")
     print("EXPERIMENT SUITE COMPLETE")

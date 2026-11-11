@@ -9,7 +9,14 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
+
+@dataclass
+class TrainConfig:
+    """RF training configuration."""
+    rf_n_estimators: List[int] = field(default_factory=lambda: [[100]])
+    rf_max_depth: List[bool] = field(default_factory=lambda: [[None]])
+    rf_min_samples_leaf: List[int] = field(default_factory=lambda: [[1]])
 
 @dataclass
 class TrainResult:
@@ -47,10 +54,6 @@ def train_classifiers(
     num_classes = labels.max().item() + 1
 
     best_val_acc = 0.0
-    best_model_state = None
-
-    best_val_acc_last = 0.0
-    best_model_state_last = None
 
     train_features, train_labels    = features[train_idx],  labels[train_idx]
     val_features,   val_labels      = features[val_idx],    labels[val_idx]
@@ -58,6 +61,7 @@ def train_classifiers(
 
 
     # Random Forest
+    # TODO: put arguments in RF
     rf = RandomForestClassifier()
     rf.fit(train_features, train_labels)
 
@@ -98,11 +102,10 @@ def train_classifiers_averaged(
         
         if result.test_acc > best_test_acc:
             best_test_acc = result.test_acc
-            best_state = result.model_state
         
         if verbose:
             print(f"Run {run+1:2d}/{n_runs}: Test={result.test_acc:.4f} "
-                  f"TestLast={result.test_acc_last:.4f} Val={result.val_acc:.4f}")
+                  f"Val={result.val_acc:.4f}")
     
     val_accs = [r.val_acc for r in results]
     test_accs = [r.test_acc for r in results]

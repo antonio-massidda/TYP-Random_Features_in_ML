@@ -4,6 +4,7 @@ import warnings
 import torch
 from torch_geometric.data import Batch, Data
 from torch_geometric.datasets import TUDataset
+# import ZINC
 from torch_geometric.utils import to_torch_coo_tensor, degree
 from torch_geometric.transforms import BaseTransform
 from dataclasses import dataclass

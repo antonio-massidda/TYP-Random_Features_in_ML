@@ -20,7 +20,7 @@ from torch_geometric.nn import global_add_pool, global_mean_pool, global_max_poo
 from dataset import GraphDataset, DataSplit, PreparedData
 from mpnn import BatchedMPNN, MPNNConfig
 from metrics import compute_ali
-from train_classifiers import train_classifiers_averaged, AveragedTrainResult
+from train_classifiers import TrainConfig, train_classifiers_averaged, AveragedTrainResult
 
 
 @dataclass
@@ -57,7 +57,7 @@ class ExperimentConfig:
     sampling: SamplingConfig = field(default_factory=SamplingConfig)
     
     rf_n_estimators: List[int] = field(default_factory=lambda: [[100]])
-    rf_max_depth: List[int | None] = field(default_factory=lambda: [[None]])
+    rf_max_depth: List[bool] = field(default_factory=lambda: [[None]])
     rf_min_samples_leaf: List[int] = field(default_factory=lambda: [[1]])
     
     rf_n_runs: int = 10
@@ -358,12 +358,12 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
         
         for cfg_idx, (n_estimators, max_depth, min_samples_leaf) in rf_pbar:
             train_config = TrainConfig(
-                n_estimators=n_estimators,
-                max_depth=max_depth,
-                min_samples_leaf=min_samples_leaf,
+                rf_n_estimators=n_estimators,
+                rf_max_depth=max_depth,
+                rf_min_samples_leaf=min_samples_leaf,
             )
             
-            rf_result = train_rf_averaged(
+            rf_result = train_classifiers_averaged(
                 features=features,
                 labels=data.labels,
                 train_idx=split.train_idx,
@@ -383,13 +383,8 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
 
                 'val_acc': rf_result.val_acc,
                 'val_acc_std': rf_result.val_acc_std,
-                'val_acc_last': rf_result.val_acc_last,
-                'val_acc_last_std': rf_result.val_acc_last_std,
                 'test_acc': rf_result.test_acc,
                 'test_acc_std': rf_result.test_acc_std,
-                'test_acc_last': rf_result.test_acc_last,
-                'test_acc_last_std': rf_result.test_acc_last_std,
-                'best_epoch': rf_result.best_epoch
             }
             
             fold_result['rf_results'].append(result_dict)
@@ -403,14 +398,13 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
         rf_pbar.close()
         
         if verbose:
-            print(f"\n  {'Config':<35} {'Val':>12} {'Test':>12} {'TestLast':>12}")
+            print(f"\n  {'Config':<35} {'Val':>12} {'Test':>12}")
             print(f"  {'-'*35} {'-'*12} {'-'*12} {'-'*12}")
             for res in fold_result['rf_results']:
                 config_str = f"trees={res['n_estimators']} max_depth={res['max_depth']} min_samples_leaf={res['min_samples_leaf']}"
                 print(f"  {config_str:<35} "
                       f"{res['val_acc']:.4f}±{res['val_acc_std']:.3f} "
-                      f"{res['test_acc']:.4f}±{res['test_acc_std']:.3f} "
-                      f"{res['test_acc_last']:.4f}±{res['test_acc_last_std']:.3f}")
+                      f"{res['test_acc']:.4f}±{res['test_acc_std']:.3f} ")
         
         results['folds'].append(fold_result)
     
@@ -424,9 +418,7 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
         fold_results = rf_config_results[cfg_idx]
 
         test_accs = [r['test_acc'] for r in fold_results]
-        test_accs_last = [r['test_acc_last'] for r in fold_results]
         val_accs = [r['val_acc'] for r in fold_results]
-        val_accs_last = [r['val_acc_last'] for r in fold_results]
         
         agg = {
             'config_idx': cfg_idx,
@@ -435,16 +427,10 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
             'min_samples_leaf': min_samples_leaf,
             'test_acc_mean': float(np.mean(test_accs)),
             'test_acc_std': float(np.std(test_accs, ddof=1)) if len(test_accs) > 1 else 0.0,
-            'test_acc_last_mean': float(np.mean(test_accs_last)),
-            'test_acc_last_std': float(np.std(test_accs_last, ddof=1)) if len(test_accs_last) > 1 else 0.0,
             'val_acc_mean': float(np.mean(val_accs)),
             'val_acc_std': float(np.std(val_accs, ddof=1)) if len(val_accs) > 1 else 0.0,
-            'val_acc_last_mean': float(np.mean(val_accs_last)),
-            'val_acc_last_std': float(np.std(val_accs_last, ddof=1)) if len(val_accs_last) > 1 else 0.0,
             'test_accs_per_fold': test_accs,
-            'test_accs_last_per_fold': test_accs_last,
             'val_accs_per_fold': val_accs,
-            'val_accs_last_per_fold': val_accs_last
         }
         aggregated.append(agg)
 
@@ -463,20 +449,6 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
         'test_acc_std': best['test_acc_std'],
         'selection_metric': 'val_acc_mean'
     }
-
-    aggregated_by_last = sorted(aggregated, key=lambda x: x['val_acc_last_mean'], reverse=True)
-    best_last = aggregated_by_last[0]
-    results['best_config_last'] = {
-        'n_estimators': best_last['n_estimators'],
-        'max_depth': best_last['max_depth'],
-        'min_samples_leaf': best_last['min_samples_leaf'],
-
-        'val_acc_last_mean': best_last['val_acc_last_mean'],
-        'val_acc_last_std': best_last['val_acc_last_std'],
-        'test_acc_last_mean': best_last['test_acc_last_mean'],
-        'test_acc_last_std': best_last['test_acc_last_std'],
-        'selection_metric': 'val_acc_last_mean'
-    }
     
     total_time = time.time() - total_start
     results['total_time_seconds'] = total_time
@@ -488,19 +460,10 @@ def run_experiment(config: ExperimentConfig, verbose: bool = True) -> Dict[str, 
                   f"Val: {agg['val_acc_mean']:.4f}±{agg['val_acc_std']:.4f} | "
                   f"Test: {agg['test_acc_mean']:.4f}±{agg['test_acc_std']:.4f}")
 
-        print(f"\n--- Top 5 RF Configurations (by mean VAL_LAST acc across folds) ---")
-        for i, agg in enumerate(aggregated_by_last[:5]):
-            print(f"  {i+1}. trees={agg['n_estimators']} max_depth={agg['max_depth']} min_samples_leaf={agg['min_samples_leaf']} | "
-                  f"ValLast: {agg['val_acc_last_mean']:.4f}±{agg['val_acc_last_std']:.4f} | "
-                  f"TestLast: {agg['test_acc_last_mean']:.4f}±{agg['test_acc_last_std']:.4f}")
-
         print(f"\n{'='*70}")
         print(f"BEST CONFIG (by Val): {best['n_estimators']}, max_depth={best['max_depth']}, min_samples_leaf={best['min_samples_leaf']}")
         print(f"  Val Accuracy:  {best['val_acc_mean']:.4f} ± {best['val_acc_std']:.4f}")
         print(f"  Test Accuracy: {best['test_acc_mean']:.4f} ± {best['test_acc_std']:.4f}")
-        print(f"\nBEST CONFIG (by ValLast): {best_last['n_estimators']}, max_depth={best_last['max_depth']}, min_samples_leaf={best_last['min_samples_leaf']}")
-        print(f"  ValLast Accuracy:  {best_last['val_acc_last_mean']:.4f} ± {best_last['val_acc_last_std']:.4f}")
-        print(f"  TestLast Accuracy: {best_last['test_acc_last_mean']:.4f} ± {best_last['test_acc_last_std']:.4f}")
         print(f"{'='*70}")
         print(f"Total time: {total_time/60:.1f} minutes")
     
