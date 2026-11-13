@@ -52,32 +52,41 @@ sampling:
   poolings: [sum]
   weight_init_stds: [0.1]
 
-# Random Forest training settings
-rf:
-  # Hyperparameter grid
-  n_estimators: [300]
-  max_depth: [null]
-  min_samples_leaf: [1]
+classifiers:
+  # Random Forest training settings
+  rf:
+    # Hyperparameter grid
+    n_estimators: [300]
+    max_depth: [null]
+    min_samples_leaf: [1]
 
-  # Training settings (not in grid)
-  n_runs: 3
+    # Training settings (not in grid)
+    n_runs: 3
 
-# SVM training settings
-svm:
-  # Hyperparameter grid
-  C: [1.0]              # Regularization parameter
-  kernel: ['rbf']       # Kernel type used in the algorithm
+  # SVM training settings
+  svm:
+    # Hyperparameter grid
+    C: [1.0]              # Regularization parameter
+    kernel: ['rbf']       # Kernel type used in the algorithm
 
-  # Training settings (not in grid)
-  n_runs: 1
+    # Training settings (not in grid)
+    n_runs: 1
 
-# Logistic Regression training settings
-logr:
-  # Hyperparameter grid
-  C: [1.0]              # Inverse of regularization strength
+  # Logistic Regression training settings
+  logr:
+    # Hyperparameter grid
+    C: [1.0]              # Inverse of regularization strength
 
-  # Training settings (not in grid)
-  n_runs: 1
+    # Training settings (not in grid)
+    n_runs: 1
+
+  # KNN training settings
+  knn:
+    # Hyperparameter grid
+    n_neighbors: [5]
+
+    # Training settings (not in grid)
+    n_runs: 1
 
 # Output settings
 output:

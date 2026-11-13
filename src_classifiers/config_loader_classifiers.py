@@ -35,6 +35,12 @@ def get_sampling_configs_from_yaml(config: Dict[str, Any]) -> List[Dict[str, Any
         })
     return configs
 
+def get_clfs_config_from_yaml(config: Dict[str, Any], classifier: str = 'all') -> Dict[str, Any]:
+    clfs_cfg = config['classifiers']
+    if classifier == 'all':
+        get_rf_config_from_yaml(config)
+        get_svm_config_from_yaml(config)
+
 def get_rf_config_from_yaml(config: Dict[str, Any]) -> Dict[str, Any]:
     """Extract RF configuration from loaded config."""
     rf_cfg = config['rf']
@@ -46,3 +52,25 @@ def get_rf_config_from_yaml(config: Dict[str, Any]) -> Dict[str, Any]:
 
         'n_runs': int(rf_cfg['n_runs']),
     }
+
+def get_svm_config_from_yaml(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract SVM configuration from loaded config."""
+    svm_cfg = config['svm']
+    
+    return {
+        'C': [int(x) for x in svm_cfg['C']],
+        'kernel': [str(x) for x in svm_cfg['kernel']],
+
+        'n_runs': int(svm_cfg['n_runs']),
+    }
+
+def get_logr_config_from_yaml(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract Logistic regression configuration from loaded config."""
+    logr_cfg = config['logr']
+    
+    return {
+        'C': [int(x) for x in logr_cfg['C']],
+
+        'n_runs': int(logr_cfg['n_runs']),
+    }
+

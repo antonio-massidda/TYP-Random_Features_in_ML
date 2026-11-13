@@ -34,7 +34,8 @@ def get_datasets_from_config(config: Dict[str, Any]) -> List[Dict[str, Any]]:
 # MY NOTE: run 80 rounds of sampling 2000 GNNs for each dataset
 def run_all_experiments(
     config_path: Optional[str] = None,
-    verbose: bool = True
+    verbose: bool = True,
+    classifier: str = 'all'
 ) -> List[str]:
     """Run all configured sampling experiments."""
     if config_path is None:
@@ -46,7 +47,8 @@ def run_all_experiments(
         raise FileNotFoundError(f"Config file not found: {config_path}")
     config = load_config(config_path)
     sampling_configs = get_sampling_configs_from_yaml(config)
-    rf_config = get_rf_config_from_yaml(config)
+    # rf_config = get_rf_config_from_yaml(config)
+    clfs_config = get_clfs_config_from_yaml(config, classifier)
     datasets = get_datasets_from_config(config)
     total_samples = config['sampling']['total_samples']
     chunk_size = config['sampling']['chunk_size']
@@ -190,12 +192,16 @@ def main():
                         help='Optional path to an external YAML config file')
     parser.add_argument('--quiet', action='store_true',
                         help='Reduce output verbosity')
+    parser.add_argument('--classifier', type=str,
+                        help='Try only one classifier')
     
     args = parser.parse_args()
-    
+
+    # TODO: make sure putting a random string does not create problems for classifier
     run_all_experiments(
         config_path=args.config,
-        verbose=not args.quiet
+        verbose=not args.quiet,
+        classifier=args.classifier or 'all'
     )
 
 
