@@ -18,7 +18,7 @@ from sampling_classifiers import (
     run_experiment,
     save_results
 )
-from config_loader_classifiers import load_config, get_sampling_configs_from_yaml, get_rf_config_from_yaml
+from config_loader_classifiers import load_config, get_sampling_configs_from_yaml, get_clfs_config_from_yaml
 
 DEFAULT_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "config_classifiers.yaml"
 

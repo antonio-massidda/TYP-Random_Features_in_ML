@@ -38,8 +38,10 @@ def get_sampling_configs_from_yaml(config: Dict[str, Any]) -> List[Dict[str, Any
 def get_clfs_config_from_yaml(config: Dict[str, Any], classifier: str = 'all') -> Dict[str, Any]:
     clfs_cfg = config['classifiers']
     if classifier == 'all':
-        get_rf_config_from_yaml(config)
-        get_svm_config_from_yaml(config)
+        return {
+            "rf" : get_rf_config_from_yaml(config),
+            "svm" : get_svm_config_from_yaml(config),
+        }
 
 def get_rf_config_from_yaml(config: Dict[str, Any]) -> Dict[str, Any]:
     """Extract RF configuration from loaded config."""
