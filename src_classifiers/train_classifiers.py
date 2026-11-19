@@ -14,9 +14,14 @@ from typing import List, Optional
 @dataclass
 class TrainConfig:
     """RF training configuration."""
+    classifier: str = 'rf'
+
     rf_n_estimators: List[int] = field(default_factory=lambda: [[100]])
     rf_max_depth: List[bool] = field(default_factory=lambda: [[None]])
     rf_min_samples_leaf: List[int] = field(default_factory=lambda: [[1]])
+
+    svm_C: List[float] = field(default_factory=lambda: [[1.0]])
+    svm_kernel: List[str] = field(default_factory=lambda: [['rbf']])
 
 @dataclass
 class TrainResult:
@@ -56,10 +61,20 @@ def train_classifiers(
     val_features,   val_labels      = features[val_idx],    labels[val_idx]
     test_features,  test_labels     = features[test_idx],   labels[test_idx]
 
+    rf_n_estimators = config[rf_n_estimators]
+    rf_max_depth = config[rf_max_depth]
+    rf_min_samples_leaf = config[rf_min_samples_leaf]
+
+    svm_C = config[svm_C]
+    svm_kernel = config[svm_kernel]
 
     # Random Forest
     # TODO: put arguments in RF
-    rf = RandomForestClassifier()
+    rf = RandomForestClassifier(
+        n_estimators=rf_n_estimators,
+        max_depth=rf_max_depth,
+        min_samples_leaf=rf_min_samples_leaf
+    )
     rf.fit(train_features, train_labels)
 
     return TrainResult(
